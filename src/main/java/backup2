@@ -1,0 +1,49 @@
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/25943
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int left = Integer.parseInt(st.nextToken());
+        int right = Integer.parseInt(st.nextToken());
+
+        for (int i = 2; i < n; i++) {
+            int in = Integer.parseInt(st.nextToken());
+
+            if (left > right) {
+                right += in;
+            } else {
+                left += in;
+            }
+        }
+
+        int diff = Math.abs(left - right);
+
+        int c = 0;
+        int[] arr = new int[]{1, 2, 5, 10, 20, 50, 100};
+        for (int i = arr.length - 1; i >= 0; i--) {
+            c += diff / arr[i];
+            diff = diff % arr[i];
+        }
+
+        bw.write(Integer.toString(c));
+
+        bw.newLine();
+        bw.close();
+        br.close();
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

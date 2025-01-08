@@ -8,15 +8,10 @@ import java.nio.charset.StandardCharsets;
 
 class MockStandardInputTest {
 
-    @Test
-    void initTest() {
-        Assertions.assertTrue(true);
-    }
-
     @ParameterizedTest(name = "TC {index} from CSV - {0}")
     @CsvFileSource(files = "src/test/resources/TestCase.csv")
     void twoParameterFromCsvTest(String input, String output) throws IOException {
-        InputStream sysInBackup = System.in; // backup System.in to restore it later
+        InputStream sysInBackup = System.in; // backup1 System.in to restore it later
 
         ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);

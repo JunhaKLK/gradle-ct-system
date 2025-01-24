@@ -1,47 +1,51 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/25943
+    // https://www.acmicpc.net/problem/1343
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int n = Integer.parseInt(br.readLine());
+        String a = "AAAA";
+        String b = "BB";
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        List<Integer> len = new ArrayList<>();
+        String[] sp = br.readLine().split("\\.");
 
-        int left = Integer.parseInt(st.nextToken());
-        int right = Integer.parseInt(st.nextToken());
-
-        for (int i = 2; i < n; i++) {
-            int in = Integer.parseInt(st.nextToken());
-
-            if (left > right) {
-                right += in;
-            } else {
-                left += in;
+        boolean hasOdd = false;
+        for (String s : sp) {
+            if (s.length() % 2 == 1) {
+                hasOdd = true;
+                len.clear();
+                break;
             }
+
+            len.add(s.length());
         }
 
-        int diff = Math.abs(left - right);
+        if (hasOdd) {
+            bw.write("-1");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (int n : len) {
+                sb.append(a.repeat(Math.max(0, n / 4)));
+                sb.append(b.repeat(Math.max(0, (n - ((n / 4) * 4))/2)));
 
-        int c = 0;
-        int[] arr = new int[]{1, 2, 5, 10, 20, 50, 100};
-        for (int i = arr.length - 1; i >= 0; i--) {
-            c += diff / arr[i];
-            diff = diff % arr[i];
+                sb.append(".");
+            }
+
+            bw.write(sb.substring(0, sb.length() - 1));
         }
-
-        bw.write(Integer.toString(c));
 
         bw.newLine();
         bw.close();
         br.close();
     }
-
 
     public static void main(String[] args) throws IOException {
         problemSolver();

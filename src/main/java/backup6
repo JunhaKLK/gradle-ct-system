@@ -1,0 +1,61 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/21967
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        int[] arr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+
+        BitSet[] bitSets = new BitSet[10];
+        for (int i = 0; i < 10; i++) {
+            bitSets[i] = new BitSet(n);
+        }
+
+        for (int i = 0; i < n; i++) {
+            bitSets[arr[i] - 1].set(i, true);
+        }
+
+        int max = 0;
+
+        for (int firstIdx = 2; firstIdx < 10; firstIdx++) {
+            BitSet bs = (BitSet) bitSets[firstIdx].clone();
+            bs.or(bitSets[firstIdx - 1]);
+            bs.or(bitSets[firstIdx - 2]);
+
+            int start = bs.nextSetBit(0);
+
+            while (start != -1) {
+                int endPlusOne = bs.nextClearBit(start);
+
+                if (endPlusOne == -1) {
+                    break;
+                } else {
+                    int currLen = endPlusOne - start;
+
+                    if (max < currLen) {
+                        max = currLen;
+                    }
+                }
+
+                start = bs.nextSetBit(endPlusOne);
+            }
+        }
+
+        bw.write(Integer.toString(max));
+
+        bw.newLine();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

@@ -24,7 +24,7 @@ class MockStandardInputTest {
 
         String result = out.toString(StandardCharsets.UTF_8);
 
-        Assertions.assertEquals(output, result.substring(0, result.length() - 1));
+        Assertions.assertEquals(output, result.trim());
 
         System.setIn(sysInBackup);
     }

@@ -1,0 +1,66 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/10986
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        int[] arr = new int[n];
+        int[] dp = new int[n];
+
+        StringTokenizer an = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(an.nextToken());
+        }
+
+        dp[0] = arr[0];
+        for (int i = 1; i < n; i++) {
+            dp[i] = arr[i] + dp[i - 1];
+        }
+
+        dp = Arrays.stream(dp).map(x -> x % m).toArray();
+
+        int result = 0;
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for (int num : dp) {
+            if (!map.containsKey(num)) {
+                map.put(num, 1);
+            } else {
+                map.put(num, map.get(num) + 1);
+            }
+        }
+
+        if (map.containsKey(0)) {
+            result += map.get(0);
+        }
+
+        for (int key : map.keySet()) {
+            int size = map.get(key);
+
+            result += size * (size - 1) / 2;
+        }
+
+        bw.write(Long.toString(result));
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

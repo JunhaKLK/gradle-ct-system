@@ -1,0 +1,56 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/1253
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        int[] arr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        Arrays.sort(arr);
+
+        int count = 0;
+
+        for (int i = 0; i < n; i++) {
+            int left = 0;
+            int right = n - 1;
+
+            while (left < right) {
+                if (left == i) {
+                    ++left;
+                    continue;
+                }
+
+                if (right == i) {
+                    --right;
+                    continue;
+                }
+
+                int sum = arr[left] + arr[right];
+                if (sum == arr[i]) {
+                    ++count;
+                    break;
+                } else if (sum < arr[i]) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+
+        bw.write(Integer.toString(count));
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

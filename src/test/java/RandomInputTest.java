@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,10 +14,11 @@ public class RandomInputTest {
         PrintStream printStream = new PrintStream(out);
         System.setOut(printStream);
 
-        int[] arr = new int[1000];
+        int arrSize = 10;
+        int[] arr = new int[arrSize];
         Random random = new Random();
 
-        int bound = 1000;
+        int bound = 100;
 
         for (int i = 0; i < arr.length; i++) {
             arr[i] = random.nextInt(bound);
@@ -25,24 +27,38 @@ public class RandomInputTest {
         StringBuilder inputBuilder = new StringBuilder();
         inputBuilder.append(arr.length).append("\n");
         for (int n : arr) {
-            inputBuilder.append(n).append("\n");
+            inputBuilder.append(n).append(" ");
         }
 
-        String input = inputBuilder.toString();
+        String input = inputBuilder.toString().trim();
+
+        bubbleSort(arr);
 
         ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
-        Arrays.sort(arr);
         StringBuilder expectedBuilder = new StringBuilder();
-        for (int n : arr) {
-            expectedBuilder.append(n).append("\n");
-        }
+        expectedBuilder.append(exp);
 
         Main.problemSolver();
 
         String result = out.toString(StandardCharsets.UTF_8);
 
         Assertions.assertEquals(expectedBuilder.toString().trim(), result.trim());
+    }
+
+    private static int exp = 0;
+
+    private static void bubbleSort(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            for (int j = 0; j < arr.length - 1 - i; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    ++exp;
+                    int tmp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = tmp;
+                }
+            }
+        }
     }
 }

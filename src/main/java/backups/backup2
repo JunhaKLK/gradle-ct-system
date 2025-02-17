@@ -1,0 +1,60 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/26340
+
+    private static void fold(int[] arr) {
+        if (arr[0] > arr[1]) {
+            arr[0] /= 2;
+        } else {
+            arr[1] /= 2;
+        }
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < n; i++) {
+            String in = br.readLine();
+            StringTokenizer st = new StringTokenizer(in);
+
+            int h = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            int k = Integer.parseInt(st.nextToken());
+
+            int[] arr = new int[]{h, v};
+
+            for (int j = 0; j < k; j++) {
+                fold(arr);
+            }
+
+            Arrays.sort(arr);
+
+            sb.append("Data set: ")
+                    .append(in)
+                    .append("\n")
+                    .append(arr[1])
+                    .append(" ")
+                    .append(arr[0])
+                    .append("\n")
+                    .append("\n");
+        }
+
+        bw.write(sb.toString().trim());
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

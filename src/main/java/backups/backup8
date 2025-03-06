@@ -1,0 +1,42 @@
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/3273
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        Set<Integer> set = new HashSet<>();
+
+        while (st.hasMoreTokens()) {
+            set.add(Integer.parseInt(st.nextToken()));
+        }
+
+        int x = Integer.parseInt(br.readLine());
+
+        int c = 0;
+        for (Integer i : set) {
+            if (x != 2 * i && set.contains(x - i)) {
+                ++c;
+            }
+        }
+
+        bw.write(Integer.toString(c / 2));
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

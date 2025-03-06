@@ -3,85 +3,77 @@ import java.util.*;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/30553
+    // https://www.acmicpc.net/problem/14575
 
-    private static boolean isMatches(int[] expect, int[] compare) {
-        for (int i = 0; i < expect.length; i++) {
-            if (expect[i] == 0 && expect[i] != compare[i]) {
-                return false;
-            } else if (expect[i] == 1 && expect[i] != compare[i]) {
+    private static boolean check(List<int[]> list, int s, long target) {
+        long leftBound = 0;
+        long rightBound = 0;
+
+        for (int[] item : list) {
+            if (s < item[0]) {
                 return false;
             }
+
+            if (item[1] < s) {
+                leftBound += item[1];
+                rightBound += item[1];
+            } else {
+                leftBound += item[0];
+                rightBound += s;
+            }
         }
-        return true;
+
+        return leftBound <= target && target <= rightBound;
     }
 
-    private static int convert(char c, int prevState) {
-        if (prevState == -1) {
-            return c == 'Y' ? 1 : 0;
-        } else if (prevState == 1) {
-            return c == 'N' ? 2 : 1;
-        } else {
-            return c == 'Y' ? 2 : 0;
-        }
-    }
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        String[] strings = br.readLine().split(" ");
 
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        int q = Integer.parseInt(st.nextToken());
+        int n = Integer.parseInt(strings[0]);
+        int target = Integer.parseInt(strings[1]);
+        List<int[]> list = new ArrayList<>(n);
 
-        List<int[]> ints = new LinkedList<>();
+        int left = Integer.MAX_VALUE;
+        int right = Integer.MIN_VALUE;
+
         for (int i = 0; i < n; i++) {
-            int[] flags = new int[m];
+            String[] localInput = br.readLine().split(" ");
 
-            char[] arr = br.readLine().toCharArray();
-            for (int j = 0; j < m; j++) {
-                flags[j] = arr[j] == 'Y' ? 1 : 0;
+            int sp = Integer.parseInt(localInput[0]);
+            int ep = Integer.parseInt(localInput[1]);
+
+            if (left > sp) {
+                left = sp;
             }
 
-            ints.add(flags);
+            if (right < ep) {
+                right = ep;
+            }
+
+            list.add(new int[]{sp, ep});
         }
 
-        int index = -1;
-        int[] guess = new int[m];
-        Arrays.fill(guess, -1);
-        for (int i = 0; i < q; i++) {
-            StringTokenizer st2 = new StringTokenizer(br.readLine());
+        int result = -1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
 
-            int idx = Integer.parseInt(st2.nextToken()) - 1;
-            char c = st2.nextToken().charAt(0);
-
-            guess[idx] = convert(c, guess[idx]);
-        }
-
-        int count = 0;
-
-        for (int i = 0; i < ints.size(); i++) {
-            if (isMatches(guess, ints.get(i))) {
-                ++count;
-                index = i;
+            if (check(list, mid, target)) {
+                result = mid;
+                right = mid - 1;
+            } else {
+                left = mid + 1;
             }
         }
 
-        if (count == 1) {
-            bw.write("unique");
-            bw.newLine();
-            bw.write(Integer.toString(index + 1));
-        } else {
-            bw.write("ambiguous");
-            bw.newLine();
-            bw.write(Integer.toString(count));
-        }
+        bw.write(Integer.toString(result));
 
         bw.flush();
-        bw.close();
         br.close();
+        bw.close();
     }
 
     public static void main(String[] args) throws IOException {

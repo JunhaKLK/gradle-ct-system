@@ -1,42 +1,97 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/1377
+    // https://www.acmicpc.net/problem/11370
+
+    private static boolean isValid(boolean[][] booleans, int r, int c) {
+        if (r < 0) return false;
+        if (c < 0) return false;
+        if (r >= booleans.length) return false;
+        if (c >= booleans[r].length) return false;
+
+        return booleans[r][c];
+    }
+
+    private static int[] rowAdder = {-1, 0, 1, 0};
+    private static int[] colAdder = {0, 1, 0, -1};
+
+    private static void spread(boolean[][] isMoveable, int r, int c) {
+        isMoveable[r][c] = false;
+
+        for (int i = 0; i < 4; i++) {
+            int newRow = r + rowAdder[i];
+            int newCol = c + colAdder[i];
+
+            if (isValid(isMoveable, newRow, newCol)) {
+                spread(isMoveable, newRow, newCol);
+            }
+        }
+    }
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int n = Integer.parseInt(br.readLine());
+        String size = br.readLine();
 
-        List<int[]> list = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) {
-            list.add(new int[]{i, Integer.parseInt(br.readLine())});
-        }
+        StringBuilder sb = new StringBuilder();
 
-        list.sort(Comparator.comparingInt((int[] x) -> x[1]));
+        while (!"0 0".equals(size)) {
+            StringTokenizer st = new StringTokenizer(size);
 
-        // 이미 정렬되어 skip 된 경우 = afterIdx < prevIdx
+            int w = Integer.parseInt(st.nextToken());
+            int h = Integer.parseInt(st.nextToken());
 
-        int max = 0;
+            boolean[][] booleans = new boolean[h][w];
+            boolean[][] isDot = new boolean[h][w];
 
-        for (int i = 0; i < n; i++) {
-            int[] vector = list.get(i);
-            int diff = vector[0] - i;
-            if (max < diff) {
-                max = diff;
+            List<int[]> initialSpiderPos = new ArrayList<>();
+
+            for (int i = 0; i < h; i++) {
+                char[] chars = br.readLine().toCharArray();
+
+                for (int j = 0; j < chars.length; j++) {
+                    if (chars[j] == 'T') {
+                        booleans[i][j] = true;
+                    } else if (chars[j] == 'S') {
+                        initialSpiderPos.add(new int[] {i, j});
+                    } else {
+                        isDot[i][j] = true;
+                    }
+                }
             }
+
+            for (int[] spiderPos : initialSpiderPos) {
+                spread(booleans, spiderPos[0], spiderPos[1]);
+            }
+
+            for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                    if (isDot[i][j]) {
+                        sb.append(".");
+                        continue;
+                    }
+
+                    if (booleans[i][j]){
+                        sb.append("T");
+                    } else {
+                        sb.append("S");
+                    }
+                }
+
+                sb.append("\n");
+            }
+
+            size = br.readLine();
         }
 
-        bw.write(Integer.toString(max + 1));
+        bw.write(sb.toString().trim());
 
         bw.flush();
-        bw.close();
         br.close();
+        bw.close();
     }
 
     public static void main(String[] args) throws IOException {

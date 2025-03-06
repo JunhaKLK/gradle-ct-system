@@ -1,0 +1,73 @@
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/6308
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String in = br.readLine();
+
+        StringBuilder sb = new StringBuilder();
+        int loopCount = 0;
+
+        while (!"0 0 0".equals(in)) {
+            sb.append("Sequence ").append(++loopCount).append("\n");
+
+            StringTokenizer st = new StringTokenizer(in);
+
+            int n = Integer.parseInt(st.nextToken());
+            int m = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+
+            long sum = 0;
+            long max = 0;
+            boolean[] isOn = new boolean[n];
+            long[] amp = new long[n];
+
+            for (int i = 0; i < n; i++) {
+                amp[i] = Integer.parseInt(br.readLine());
+            }
+
+            for (int i = 0; i < m; i++) {
+                int toggleTarget = Integer.parseInt(br.readLine()) - 1;
+
+                if (!isOn[toggleTarget]) {
+                    sum += amp[toggleTarget];
+
+                    if (max < sum) {
+                        max = sum;
+                    }
+                } else {
+                    sum -= amp[toggleTarget];
+                }
+
+                isOn[toggleTarget] = !isOn[toggleTarget];
+            }
+
+            if (max < c) {
+                sb.append("Fuse was not blown.").append("\n");
+                sb.append("Maximal power consumption was ").append(max).append(" amperes.").append("\n");
+            } else {
+                sb.append("Fuse was blown.").append("\n");
+            }
+
+            sb.append("\n");
+
+            in = br.readLine();
+        }
+
+        bw.write(sb.toString().trim());
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

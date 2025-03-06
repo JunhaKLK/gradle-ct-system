@@ -1,63 +1,104 @@
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/10986
+    // https://www.acmicpc.net/problem/16965
+
+    private static List<Section> sections;
+
+    private static class Section {
+        int id;
+        int start;
+        int end;
+        boolean isVisited;
+
+        public Section(int id, int start, int end) {
+            this.id = id;
+            this.start = start;
+            this.end = end;
+            this.isVisited = false;
+        }
+
+        List<Integer> movables = new ArrayList<>();
+    }
+
+    private static boolean isMovable(Section fromSection, Section toSection) {
+        return (toSection.start < fromSection.start && fromSection.start < toSection.end) ||
+                (toSection.start < fromSection.end && fromSection.end < toSection.end);
+    }
+
+    private static void resetAll() {
+        for (Section section : sections) {
+            section.isVisited = false;
+        }
+    }
+
+    private static boolean isConnected(Section fromSection, Section toSection) {
+        Queue<Section> queue = new ArrayDeque<>();
+        queue.add(fromSection);
+
+        while (!queue.isEmpty()) {
+            Section section = queue.poll();
+            section.isVisited = true;
+
+            if (section.id == toSection.id) {
+                return true;
+            }
+
+            for (Integer movable : section.movables) {
+                if (!sections.get(movable).isVisited) {
+                    queue.add(sections.get(movable));
+                }
+            }
+        }
+
+        return false;
+    }
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
+        int n = Integer.parseInt(br.readLine());
 
-        int[] arr = new int[n];
-        int[] dp = new int[n];
+        sections = new ArrayList<>();
 
-        StringTokenizer an = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(an.nextToken());
-        }
+            String[] in = br.readLine().split(" ");
 
-        dp[0] = arr[0];
-        for (int i = 1; i < n; i++) {
-            dp[i] = arr[i] + dp[i - 1];
-        }
+            int type = Integer.parseInt(in[0]);
+            int x = Integer.parseInt(in[1]);
+            int y = Integer.parseInt(in[2]);
 
-        dp = Arrays.stream(dp).map(x -> x % m).toArray();
+            if (type == 1) {
+                Section section = new Section(sections.size(), x, y);
 
-        int result = 0;
+                for (Section storedSection : sections) {
+                    if (isMovable(storedSection, section)) {
+                        storedSection.movables.add(section.id);
+                    }
 
-        Map<Integer, Integer> map = new HashMap<>();
+                    if (isMovable(section, storedSection)) {
+                        section.movables.add(storedSection.id);
+                    }
+                }
 
-        for (int num : dp) {
-            if (!map.containsKey(num)) {
-                map.put(num, 1);
+                sections.add(section);
             } else {
-                map.put(num, map.get(num) + 1);
+                resetAll();
+                sb.append(isConnected(sections.get(x - 1), sections.get(y - 1)) ? "1" : "0");
+                sb.append("\n");
             }
         }
 
-        if (map.containsKey(0)) {
-            result += map.get(0);
-        }
-
-        for (int key : map.keySet()) {
-            int size = map.get(key);
-
-            result += size * (size - 1) / 2;
-        }
-
-        bw.write(Long.toString(result));
+        bw.write(sb.toString().trim());
 
         bw.flush();
-        bw.close();
         br.close();
+        bw.close();
     }
 
     public static void main(String[] args) throws IOException {

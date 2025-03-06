@@ -1,71 +1,30 @@
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/12891
-
-    private static boolean isUsable(int[] exp, int[] cur) {
-        for (int i = 0; i < exp.length; i++) {
-            if (cur[i] < exp[i]) return false;
-        }
-
-        return true;
-    }
-
-    private static int indexMapper(char dna) {
-        switch (dna) {
-            case 'A':
-                return 0;
-            case 'C':
-                return 1;
-            case 'G':
-                return 2;
-            case 'T':
-                return 3;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
+    // https://www.acmicpc.net/problem/20376
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        String in = br.readLine();
 
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
+        Set<String> set = new HashSet<>();
 
-        char[] dna = br.readLine().toCharArray();
+        while (in != null) {
+            set.add(in.substring(11, in.length() - 1));
 
-        int[] acgtMin = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        int[] acgtCount = new int[4];
-
-        for (int i = 0; i < m; i++) {
-            acgtCount[indexMapper(dna[i])]++;
+            in = br.readLine();
         }
 
-        long count = 0;
-
-        for (int i = m; i < n; i++) {
-            if (isUsable(acgtMin, acgtCount)) {
-                ++count;
-            }
-
-            acgtCount[indexMapper(dna[i - m])]--;
-            acgtCount[indexMapper(dna[i])]++;
-        }
-
-        if (isUsable(acgtMin, acgtCount)) {
-            ++count;
-        }
-
-        bw.write(Long.toString(count));
+        bw.write(Integer.toString(set.size()));
 
         bw.flush();
-        bw.close();
         br.close();
+        bw.close();
     }
 
     public static void main(String[] args) throws IOException {

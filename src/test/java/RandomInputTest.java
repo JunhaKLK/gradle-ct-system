@@ -14,11 +14,11 @@ public class RandomInputTest {
         PrintStream printStream = new PrintStream(out);
         System.setOut(printStream);
 
-        int arrSize = 10;
+        int arrSize = 5;
         int[] arr = new int[arrSize];
         Random random = new Random();
 
-        int bound = 100;
+        int bound = 10;
 
         for (int i = 0; i < arr.length; i++) {
             arr[i] = random.nextInt(bound);

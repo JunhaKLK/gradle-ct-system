@@ -1,58 +1,87 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/17858
+    // https://www.acmicpc.net/problem/21049
 
-    private static boolean annBinarySearch(List<Long> list, long target) {
-        int left = 0;
-        int right = list.size() - 1;
-
-        while (left <= right) {
-            int mid = (left + right) / 2;
-
-            if (list.get(mid) == target) {
-                return true;
-            } else if (list.get(mid) > target) {
-                right = mid - 1;
-            } else {
-                left = mid + 1;
+    private static boolean validate(List<int[]> list) {
+        for (int[] n : list) {
+            if (n[0] < 0) {
+                return false;
             }
         }
 
-        return false;
+        return true;
+    }
+
+    private static boolean isAllZero(List<int[]> list) {
+        for (int[] n : list) {
+            if (n[0] != 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
-        long m = Long.parseLong(st.nextToken());
-        long a = Long.parseLong(st.nextToken());
-        long c = Long.parseLong(st.nextToken());
-        long x0 = Long.parseLong(st.nextToken());
+        int[] arr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 
-        List<Long> generated = new ArrayList<>();
-        generated.add((a * x0 + c) % m);
-
-        for (int i = 1; i < n; i++) {
-            generated.add((a * generated.get(i - 1) + c) % m);
+        List<int[]> vectors = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            vectors.add(new int[] {arr[i], i});
         }
 
-        int count = 0;
-        for (long num : generated) {
-            if (annBinarySearch(generated, num)) {
-                count++;
+        long sum = 0;
+        for (int[] vector : vectors) {
+            sum += vector[0];
+        }
+
+        boolean couldWin = true;
+
+        if (sum % 2 == 1) {
+            couldWin = false;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (couldWin) {
+
+            int minIdx = 0;
+            while (validate(vectors)) {
+                vectors.sort(Comparator.comparingInt((int[] x) -> x[0]));
+
+                while (minIdx < arr.length && vectors.get(minIdx)[0] == 0) {
+                    minIdx++;
+                }
+
+                if (minIdx >= arr.length) {
+                    break;
+                }
+
+                sb.append(vectors.get(minIdx)[1] + 1).append(" ").append(vectors.get(n - 1)[1] + 1).append("\n");
+
+                vectors.get(minIdx)[0]--;
+                vectors.get(arr.length - 1)[0]--;
+            }
+
+            if (!isAllZero(vectors)) {
+                couldWin = false;
             }
         }
 
-        bw.write(Integer.toString(count));
+        if (couldWin) {
+            bw.write("yes");
+            bw.newLine();
+            bw.write(sb.toString().trim());
+        } else {
+            bw.write("no");
+        }
 
         bw.flush();
         bw.close();

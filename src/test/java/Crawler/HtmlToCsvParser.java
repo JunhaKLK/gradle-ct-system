@@ -1,15 +1,17 @@
 package Crawler;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class HtmlToCsvParser {
     private static Elements parseOutputExamples(Document doc, long id) {
@@ -45,38 +47,69 @@ public class HtmlToCsvParser {
                 outputs = parseOutputExamples(doc, sampleId);
             }
 
-            // 파일 닫기
             printer.flush();
             printer.close();
 
             System.out.println("CSV 파일이 성공적으로 생성되었습니다.");
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e.getCause());
         }
     }
 
     private static Document getHTML(long id) {
         try {
             Document doc = Jsoup.connect("https://www.acmicpc.net/problem/" + id).timeout(3000).get();
-            System.out.println(doc.html());
+
             return doc;
         } catch (IOException e) {
             throw new IllegalStateException(e.getCause());
         }
     }
 
-    private static long getProblemId() {
-        // todo
-        return 32154L;
+    private static Optional<Long> getProblemId() {
+        String firstComment = CommentExtractor.getFirstComment().orElse("").trim();
+
+        if (!Pattern.matches("https://www.acmicpc.net/problem/\\d+$", firstComment)) {
+            return Optional.empty();
+        }
+
+        List<Character> idCharList = new ArrayList<>(5);
+
+        char[] chars = firstComment.toCharArray();
+        for (int i = firstComment.length() - 1; i >= 0; i--) {
+            if (chars[i] == '/') {
+                break;
+            } else {
+                if ('0' > chars[i] || '9' < chars[i] ) return Optional.empty();
+
+                idCharList.add(chars[i]);
+            }
+        }
+
+        for (int i = 0; i < idCharList.size() / 2; i++) {
+            char tmp = idCharList.get(i);
+            idCharList.set(i, idCharList.get(idCharList.size() - 1 - i));
+            idCharList.set(idCharList.size() - 1 - i, tmp);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : idCharList) {
+            sb.append(c);
+        }
+
+        try {
+            Long id = Long.parseLong(sb.toString());
+
+            return Optional.of(id);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
     }
 
     public static void setCSV() {
-        Document html = getHTML(getProblemId());
+        Long id = getProblemId().orElseThrow(IllegalStateException::new);
+        Document html = getHTML(id);
         writeToCSV(html);
-    }
-
-    public static void main(String[] args) {
-        setCSV();
     }
 }

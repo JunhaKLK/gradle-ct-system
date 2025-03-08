@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class HtmlToCsvParser {
+    private static Consts consts = new Consts();
+
     private static Elements parseOutputExamples(Document doc, long id) {
         String prefix = "#sample-output-";
 
@@ -30,8 +32,9 @@ public class HtmlToCsvParser {
         try {
             int sampleId = 1;
 
-            FileWriter out = new FileWriter("src/test/resources/TestCase.csv");
-            CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT);
+            FileWriter tcWriter = new FileWriter(consts.getTcCsvPath());
+
+            CSVPrinter tcPrinter = new CSVPrinter(tcWriter, CSVFormat.DEFAULT);
 
             Elements inputs = parseInputExamples(doc, sampleId);
             Elements outputs = parseOutputExamples(doc, sampleId);
@@ -40,15 +43,15 @@ public class HtmlToCsvParser {
                 String input = inputs.text().trim();
                 String output = outputs.text().trim();
 
-                printer.printRecord(input, output);
+                tcPrinter.printRecord(input, output);
                 sampleId++;
 
                 inputs = parseInputExamples(doc, sampleId);
                 outputs = parseOutputExamples(doc, sampleId);
             }
 
-            printer.flush();
-            printer.close();
+            tcPrinter.flush();
+            tcPrinter.close();
 
             System.out.println("CSV 파일이 성공적으로 생성되었습니다.");
 
@@ -81,7 +84,7 @@ public class HtmlToCsvParser {
             if (chars[i] == '/') {
                 break;
             } else {
-                if ('0' > chars[i] || '9' < chars[i] ) return Optional.empty();
+                if ('0' > chars[i] || '9' < chars[i]) return Optional.empty();
 
                 idCharList.add(chars[i]);
             }
@@ -109,7 +112,11 @@ public class HtmlToCsvParser {
 
     public static void setCSV() {
         Long id = getProblemId().orElseThrow(IllegalStateException::new);
+
+        if (!MetadataManager.needUpdate(id)) return;
+
         Document html = getHTML(id);
+        MetadataManager.update(id);
         writeToCSV(html);
     }
 }

@@ -34,7 +34,7 @@ public class HtmlToCsvParser {
 
             FileWriter tcWriter = new FileWriter(consts.getTcCsvPath());
 
-            CSVPrinter tcPrinter = new CSVPrinter(tcWriter, CSVFormat.DEFAULT);
+            CSVPrinter tcPrinter = new CSVPrinter(tcWriter, CSVFormat.DEFAULT.builder().setRecordSeparator('\n').get());
 
             Elements inputs = parseInputExamples(doc, sampleId);
             Elements outputs = parseOutputExamples(doc, sampleId);
@@ -62,7 +62,7 @@ public class HtmlToCsvParser {
 
     private static Document getHTML(long id) {
         try {
-            Document doc = Jsoup.connect("https://www.acmicpc.net/problem/" + id).timeout(3000).get();
+            Document doc = Jsoup.connect("https://www.acmicpc.net/problem/" + id).timeout(10000).get();
 
             return doc;
         } catch (IOException e) {
@@ -118,5 +118,6 @@ public class HtmlToCsvParser {
         Document html = getHTML(id);
         MetadataManager.update(id);
         writeToCSV(html);
+        CSVLineEndingConverter.convert();
     }
 }

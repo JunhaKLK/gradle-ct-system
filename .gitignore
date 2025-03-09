@@ -40,3 +40,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+src/test/resources/TestCase.csv
+src/test/resources/TestCase_Meta.csv

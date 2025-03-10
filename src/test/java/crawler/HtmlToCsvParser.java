@@ -1,5 +1,7 @@
-package Crawler;
+package crawler;
 
+import common.Extractor;
+import common.Consts;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.jsoup.Jsoup;
@@ -71,7 +73,7 @@ public class HtmlToCsvParser {
     }
 
     private static Optional<Long> getProblemId() {
-        String firstComment = CommentExtractor.getFirstComment().orElse("").trim();
+        String firstComment = Extractor.getFirstComment().orElse("").trim();
 
         if (!Pattern.matches("https://www.acmicpc.net/problem/\\d+$", firstComment)) {
             return Optional.empty();

@@ -1,0 +1,33 @@
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/20376
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String in = br.readLine();
+
+        Set<String> set = new HashSet<>();
+
+        while (in != null) {
+            set.add(in.substring(11, in.length() - 1));
+
+            in = br.readLine();
+        }
+
+        bw.write(Integer.toString(set.size()));
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

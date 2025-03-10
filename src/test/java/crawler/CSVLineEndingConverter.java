@@ -1,4 +1,6 @@
-package Crawler;
+package crawler;
+
+import common.Consts;
 
 import java.io.*;
 import java.nio.file.*;

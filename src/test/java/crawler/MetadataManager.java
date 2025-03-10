@@ -1,5 +1,6 @@
-package Crawler;
+package crawler;
 
+import common.Consts;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;

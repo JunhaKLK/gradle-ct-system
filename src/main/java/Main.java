@@ -1,28 +1,13 @@
 import java.io.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.Period;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/21049
+    // https://www.acmicpc.net/problem/2730
 
-    private static boolean validate(List<int[]> list) {
-        for (int[] n : list) {
-            if (n[0] < 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static boolean isAllZero(List<int[]> list) {
-        for (int[] n : list) {
-            if (n[0] != 0) {
-                return false;
-            }
-        }
-
-        return true;
+    private static boolean isIn(LocalDate high, LocalDate low, LocalDate compare) {
+        return high.isAfter(compare) && low.isBefore(compare);
     }
 
     public static void problemSolver() throws IOException {
@@ -31,61 +16,82 @@ public class Main {
 
         int n = Integer.parseInt(br.readLine());
 
-        int[] arr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-
-        List<int[]> vectors = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            vectors.add(new int[] {arr[i], i});
-        }
-
-        long sum = 0;
-        for (int[] vector : vectors) {
-            sum += vector[0];
-        }
-
-        boolean couldWin = true;
-
-        if (sum % 2 == 1) {
-            couldWin = false;
-        }
-
         StringBuilder sb = new StringBuilder();
-        if (couldWin) {
 
-            int minIdx = 0;
-            while (validate(vectors)) {
-                vectors.sort(Comparator.comparingInt((int[] x) -> x[0]));
+        for (int i = 0; i < n; i++) {
+            String[] strings = br.readLine().split(" ");
 
-                while (minIdx < arr.length && vectors.get(minIdx)[0] == 0) {
-                    minIdx++;
+            String[] dueDate = strings[0].split("/");
+            String[] parseDate = strings[1].split("/");
+
+            LocalDate dueLocalDate = LocalDate.of(Integer.parseInt(dueDate[2]), Integer.parseInt(dueDate[0]), Integer.parseInt(dueDate[1]));
+            LocalDate lowerBound = LocalDate.of(Integer.parseInt(dueDate[2]), Integer.parseInt(dueDate[0]), Integer.parseInt(dueDate[1])).minusDays(8);
+            LocalDate higherBound = LocalDate.of(Integer.parseInt(dueDate[2]), Integer.parseInt(dueDate[0]), Integer.parseInt(dueDate[1])).plusDays(8);
+
+            LocalDate sameYearSubmitDate = LocalDate.of(dueLocalDate.getYear(), Integer.parseInt(parseDate[0]), Integer.parseInt(parseDate[1]));
+            LocalDate lastYearSubmitDate = LocalDate.of(dueLocalDate.getYear() - 1, Integer.parseInt(parseDate[0]), Integer.parseInt(parseDate[1]));
+            LocalDate nextYearSubmitDate = LocalDate.of(dueLocalDate.getYear() + 1, Integer.parseInt(parseDate[0]), Integer.parseInt(parseDate[1]));
+
+            if (isIn(higherBound, lowerBound, sameYearSubmitDate)) {
+                if (dueLocalDate.isEqual(sameYearSubmitDate)) {
+                    sb.append("SAME DAY");
+                    sb.append("\n");
+                    continue;
                 }
 
-                if (minIdx >= arr.length) {
-                    break;
+                attachDate(dueLocalDate, sameYearSubmitDate, sb);
+
+            } else if (isIn(higherBound, lowerBound, lastYearSubmitDate)) {
+                if (dueLocalDate.isEqual(lastYearSubmitDate)) {
+                    sb.append("SAME DAY");
+                    sb.append("\n");
+                    continue;
                 }
 
-                sb.append(vectors.get(minIdx)[1] + 1).append(" ").append(vectors.get(n - 1)[1] + 1).append("\n");
+                attachDate(dueLocalDate, lastYearSubmitDate, sb);
+            } else if (isIn(higherBound, lowerBound, nextYearSubmitDate)) {
+                if (dueLocalDate.isEqual(nextYearSubmitDate)) {
+                    sb.append("SAME DAY");
+                    sb.append("\n");
+                    continue;
+                }
 
-                vectors.get(minIdx)[0]--;
-                vectors.get(arr.length - 1)[0]--;
+                attachDate(dueLocalDate, nextYearSubmitDate, sb);
+            } else {
+                sb.append("OUT OF RANGE");
             }
 
-            if (!isAllZero(vectors)) {
-                couldWin = false;
-            }
+            sb.append("\n");
         }
 
-        if (couldWin) {
-            bw.write("yes");
-            bw.newLine();
-            bw.write(sb.toString().trim());
-        } else {
-            bw.write("no");
-        }
+        bw.write(sb.toString().trim());
 
         bw.flush();
-        bw.close();
         br.close();
+        bw.close();
+    }
+
+    private static void attachDate(LocalDate dueLocalDate, LocalDate localDate, StringBuilder sb) {
+        sb.append(localDate.getMonthValue())
+                .append("/")
+                .append(localDate.getDayOfMonth())
+                .append("/")
+                .append(localDate.getYear())
+                .append(" IS ");
+
+        Period period = dueLocalDate.until(localDate);
+        long diffDays = period.getDays();
+
+        if (diffDays > 0L) {
+            sb.append(diffDays).append(" DAY");
+            if (diffDays != 1) sb.append("S");
+            sb.append(" AFTER");
+        } else {
+            diffDays *= -1;
+            sb.append(diffDays).append(" DAY");
+            if (diffDays != 1) sb.append("S");
+            sb.append(" PRIOR");
+        }
     }
 
     public static void main(String[] args) throws IOException {

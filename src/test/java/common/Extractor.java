@@ -1,12 +1,12 @@
-package Crawler;
+package common;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Optional;
 
-public class CommentExtractor {
-    private static final String filePath = "src/main/java/Main.java";
+public class Extractor {
+    private static final String filePath = Consts.getFilePath();
 
     public static Optional<String> getFirstComment() {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -25,5 +25,9 @@ public class CommentExtractor {
             return Optional.empty();
         }
         return Optional.empty();
+    }
+
+    public static byte[] getMainClassContent() throws IOException {
+        return Files.readAllBytes(Paths.get(filePath));
     }
 }

@@ -1,9 +1,8 @@
 import java.io.*;
-import java.util.Arrays;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/10211
+    // https://www.acmicpc.net/problem/24839
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,19 +13,28 @@ public class Main {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < t; i++) {
-            int n = Integer.parseInt(br.readLine());
+            char[] inputTarget = br.readLine().toCharArray();
+            char[] produced = br.readLine().toCharArray();
 
-            int[] arr = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+            int iPointer = 0;
 
-            int max = arr[0];
-            int localMax = arr[0];
+            int miss = 0;
 
-            for (int j = 1; j < n; j++) {
-                localMax = Math.max(localMax + arr[j], arr[j]);
-                max = Math.max(max, localMax);
+            for (char p : produced) {
+                if (iPointer == inputTarget.length) {
+                    miss += produced.length - iPointer;
+                    break;
+                }
+
+                if (inputTarget[iPointer] == p) {
+                    iPointer++;
+                } else {
+                    ++miss;
+                }
             }
 
-            sb.append(max).append("\n");
+            sb.append("Case #").append(i + 1).append(": ");
+            sb.append(iPointer == inputTarget.length ? miss : "IMPOSSIBLE").append("\n");
         }
 
         bw.write(sb.toString().trim());

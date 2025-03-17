@@ -1,0 +1,99 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/12660
+
+    private static class Vector {
+        char c;
+        int count;
+
+        public Vector(char c) {
+            this.c = c;
+            this.count = 1;
+        }
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        StringBuilder sb = new StringBuilder();
+
+        char[] chars = "welcome to code jam".toCharArray();
+
+        Set<Character> set = new HashSet<>();
+        for (char c : chars) {
+            set.add(c);
+        }
+
+        for (int i = 0; i < n; i++) {
+            List<Vector> list = new ArrayList<>();
+
+            char[] input = br.readLine().toCharArray();
+
+            for (char current : input) {
+                if (!set.contains(current)) {
+                    continue;
+                }
+
+                if (!list.isEmpty() && list.get(list.size() - 1).c == current) {
+                    list.get(list.size() - 1).count++;
+                    continue;
+                }
+
+                list.add(new Vector(current));
+            }
+
+            int lastFourDigit = 0;
+
+            for (int seqStartIdx = 0; seqStartIdx < list.size(); seqStartIdx++) {
+                Vector initial = list.get(seqStartIdx);
+                int localResult;
+
+                if (chars[0] == initial.c) {
+                    localResult = initial.count;
+                    localResult %= 10000;
+                    int seq = 1;
+
+                    for (int last = seqStartIdx + 1; last < list.size(); last++) {
+                        Vector lastVectors = list.get(last);
+
+                        if (lastVectors.c == chars[seq]) {
+                            seq++;
+                            localResult *= lastVectors.count;
+                            localResult %= 10000;
+                        }
+
+                        if (seq == chars.length) {
+                            break;
+                        }
+                    }
+
+                    if (seq == chars.length) {
+                        lastFourDigit += localResult;
+                        lastFourDigit %= 10000;
+                    }
+                }
+            }
+
+            sb.append("Case #").append(i + 1).append(": ");
+            String conv = Integer.toString(lastFourDigit);
+            String filler = "0".repeat(4 - conv.length());
+            sb.append(filler).append(conv).append("\n");
+        }
+
+        bw.write(sb.toString().trim());
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

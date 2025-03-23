@@ -74,7 +74,11 @@ public class Main {
                     }
 
                     if (seq == chars.length) {
-                        lastFourDigit += localResult;
+                        if (lastFourDigit == 0) {
+                            lastFourDigit = 1;
+                        }
+
+                        lastFourDigit *= localResult;
                         lastFourDigit %= 10000;
                     }
                 }

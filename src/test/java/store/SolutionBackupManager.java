@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class BackupManager {
+public class SolutionBackupManager {
     public static void store() {
         long pid = getProblemId().get();
         File file = getFileWithPid(pid);

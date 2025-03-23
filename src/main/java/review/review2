@@ -9,7 +9,7 @@ public class Main {
     private static boolean[] isVisited;
     private static int minSum;
 
-    private static void backtrack(int[][] w,int prevDest, int depth, int sum) {
+    private static void backtrack(int[][] w, int prevDest, int depth, int sum) {
         if (maxDepth == depth) {
             sum += w[prevDest][0];
 
@@ -20,7 +20,6 @@ public class Main {
         }
 
         if (minSum < sum) return;
-
 
         for (int destCandidate = 1; destCandidate < w.length; destCandidate++) {
             if (!isVisited[destCandidate]) {
@@ -45,7 +44,7 @@ public class Main {
         for (int i = 0; i < n; i++) {
             String[] input = br.readLine().split(" ");
             w[i] = new int[n];
-            Arrays.fill(w[i], 2000001);
+            Arrays.fill(w[i], (Integer.MAX_VALUE / 2) - 1);
             for (int j = 0; j < n; j++) {
                 int dist = Integer.parseInt(input[j]);
                 if (dist != 0) w[i][j] = dist;

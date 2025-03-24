@@ -1,0 +1,126 @@
+import java.io.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/13360
+
+    public static class User {
+        @Override
+        public String toString() {
+            return "User{" +
+                    "classLevel=" + classLevel +
+                    ", currentStar=" + currentStar +
+                    ", isStreak=" + isStreak +
+                    '}';
+        }
+
+        private int classLevel = 25;
+        private int currentStar = 0;
+        private int streakCount = 0;
+        private boolean isStreak = false;
+
+        private int getClassUpReq(int level) {
+            if (level >= 21) {
+                return 2;
+            } else if (level >= 16) {
+                return 3;
+            } else if (level >= 11) {
+                return 4;
+            } else {
+                return 5;
+            }
+        }
+
+        private boolean isLegend() {
+            return classLevel == 0;
+        }
+
+        private void levelUp() {
+            this.classLevel--;
+            this.currentStar = 0;
+        }
+
+        private void levelDown() {
+            int level = this.classLevel + 1;
+            this.currentStar = getClassUpReq(level) - 1;
+        }
+
+        public void win() {
+            if (isLegend()) return;
+
+            int targetStar = getClassUpReq(this.classLevel);
+            if (this.classLevel > 5 && isStreak) {
+                if (this.currentStar == targetStar) {
+                    levelUp();
+                }
+                this.currentStar++;
+                if (this.currentStar == targetStar) {
+                    levelUp();
+                }
+                this.currentStar++;
+            } else {
+                if (this.currentStar == targetStar) {
+                    levelUp();
+                } else {
+                    this.currentStar++;
+                }
+            }
+
+            if (this.classLevel > 5) {
+                streakCount++;
+                this.isStreak = streakCount >= 2;
+            }
+        }
+
+        public void lose() {
+            if (isLegend()) return;
+
+            isStreak = false;
+            streakCount = 0;
+
+            if (this.classLevel > 20) {
+                return;
+            } else if (this.classLevel == 20 && this.currentStar > 0) {
+                this.currentStar--;
+            } else {
+                if (this.currentStar == 0) {
+                    levelDown();
+                } else {
+                    this.currentStar--;
+                }
+            }
+        }
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String s = br.readLine();
+        User user = new User();
+
+        for (char c : s.toCharArray()) {
+            if (c == 'W') {
+                user.win();
+            } else {
+                user.lose();
+            }
+
+//            System.out.println("user = " + user);
+        }
+
+        if (user.classLevel == 0) {
+            bw.write("LEGEND");
+        } else {
+            bw.write(Integer.toString(user.classLevel));
+        }
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

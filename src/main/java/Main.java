@@ -1,39 +1,37 @@
 import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    // https://www.acmicpc.net/problem/3273
+    // https://www.acmicpc.net/problem/8896
+
+    private static int afterTaxIncome(int prevIncome) {
+        if (prevIncome > 5000000) {
+            return (int) (prevIncome * 0.8);
+        } else if (prevIncome > 1000000) {
+            return (int) (prevIncome * 0.9);
+        } else {
+            return prevIncome;
+        }
+    }
 
     public static void problemSolver() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int n = Integer.parseInt(br.readLine());
+        String in = br.readLine();
 
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        Set<Integer> set = new HashSet<>();
+        StringBuilder sb = new StringBuilder();
+        while (!"0".equals(in)) {
+            sb.append(afterTaxIncome(Integer.parseInt(in))).append("\n");
 
-        while (st.hasMoreTokens()) {
-            set.add(Integer.parseInt(st.nextToken()));
+            in = br.readLine();
         }
 
-        int x = Integer.parseInt(br.readLine());
-
-        int c = 0;
-        for (Integer i : set) {
-            if (x != 2 * i && set.contains(x - i)) {
-                ++c;
-            }
-        }
-
-        bw.write(Integer.toString(c / 2));
+        bw.write(sb.toString().trim());
 
         bw.flush();
-        br.close();
         bw.close();
+        br.close();
     }
 
     public static void main(String[] args) throws IOException {

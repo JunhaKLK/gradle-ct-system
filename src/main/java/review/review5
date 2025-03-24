@@ -1,0 +1,50 @@
+import java.io.*;
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/30571
+
+    private static String convert(int code) {
+        StringBuilder sb = new StringBuilder();
+
+        while (code > 0) {
+            sb.append((char) (code % 26 + 'a'));
+            code /= 26;
+        }
+
+        return sb.toString();
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        Map<BigDecimal, String> map = new TreeMap<>();
+
+        StringBuilder sb = new StringBuilder();
+
+        int n = Integer.parseInt(br.readLine());
+        for (int i = 0; i < n; i++) {
+            String input = br.readLine();
+
+            input = input.substring(0, input.length() - 1);
+            BigDecimal bigDecimal = new BigDecimal(input);
+            if (!map.containsKey(bigDecimal)) {
+                map.put(bigDecimal, convert(bigDecimal.hashCode()));
+            }
+            sb.append(map.get(bigDecimal)).append("\n");
+        }
+
+        bw.write(sb.toString().trim());
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

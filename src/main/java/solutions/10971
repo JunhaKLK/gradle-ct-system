@@ -1,0 +1,83 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/10971
+
+    static private int[][] dp;
+    static private int[][] map;
+
+    static final int maxVal = 16_000_001;
+    static int ALL_VISITED;
+
+    private static boolean isVisited(int visited, int targetIdx) {
+        return (visited & (1 << targetIdx)) == (1 << targetIdx);
+    }
+
+    private static int visit(int visited, int targetIdx) {
+        return visited | (1 << targetIdx);
+    }
+
+    private static int TSP(int visited, int prevCity) {
+        if (visited == ALL_VISITED) {
+            if (map[prevCity][0] == 0) {
+                return Integer.MAX_VALUE;
+            } else {
+                dp[visited][prevCity] = map[prevCity][0];
+                return map[prevCity][0];
+            }
+        }
+
+        if (dp[visited][prevCity] != maxVal) {
+            return dp[visited][prevCity];
+        }
+
+        dp[visited][prevCity] = Integer.MAX_VALUE;
+        for (int i = 0; i < map.length; i++) {
+            if (!isVisited(visited, i) && map[prevCity][i] != 0) {
+                int tspResult = TSP(visit(visited, i), i);
+                if (tspResult < maxVal) {
+                    dp[visited][prevCity] = Math.min(dp[visited][prevCity], tspResult + map[prevCity][i]);
+                }
+            }
+        }
+        return dp[visited][prevCity];
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        ALL_VISITED = (1 << n) - 1;
+        dp = new int[(1 << n)][n];
+        for (int[] ints : dp) {
+            Arrays.fill(ints, maxVal);
+        }
+
+        map = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < n; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+
+        bw.write(Integer.toString(TSP(visit(0, 0), 0)));
+        bw.flush();
+
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

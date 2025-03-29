@@ -1,0 +1,90 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/14629
+
+    private static List<Long> valueWhenMin;
+    private static long minDiff;
+    private static boolean[] isUsed;
+    private static Stack<Integer> stack;
+    private static long n;
+
+    private static void backtrack(int depth) {
+        if (depth > 0) { // 최소 1자리 이상 생성
+            updateDiff();
+        }
+
+        if (depth == 10) { // 최대 10자리
+            return;
+        }
+
+        for (int i = 0; i < 10; i++) {
+            if (!isUsed[i]) {
+                if (depth == 0 && i == 0) continue; // 선행 제로 방지
+                isUsed[i] = true;
+                stack.push(i);
+                backtrack(depth + 1);
+                stack.pop();
+                isUsed[i] = false;
+            }
+        }
+    }
+
+    private static void updateDiff() {
+        if (stack.isEmpty()) return;
+
+        long created = 0;
+        for (int digit : stack) {
+            created = created * 10 + digit;
+        }
+
+        long diff = Math.abs(n - created);
+        if (diff < minDiff || (diff == minDiff && created < valueWhenMin.get(0))) {
+            valueWhenMin.clear();
+            valueWhenMin.add(created);
+            minDiff = diff;
+        } else if (diff == minDiff) {
+            valueWhenMin.add(created);
+        }
+    }
+
+    private static boolean isExceedMaxLen(String input) {
+        return input.length() > 10;
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        stack = new Stack<>();
+        minDiff = Long.MAX_VALUE;
+        valueWhenMin = new ArrayList<>();
+        isUsed = new boolean[10];
+        String input = br.readLine().trim();
+        n = Long.parseLong(input);
+
+        if (isExceedMaxLen(input)) {
+            bw.write("9876543210");
+            bw.flush();
+            bw.close();
+            br.close();
+            return;
+        }
+
+        backtrack(0);
+
+        // 최소값 선택 (동일 차이 시 더 작은 숫자)
+        long result = valueWhenMin.stream().min(Long::compare).get();
+        bw.write(Long.toString(result));
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

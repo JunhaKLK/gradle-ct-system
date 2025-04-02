@@ -1,0 +1,66 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/1456
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String[] inputs = br.readLine().split(" ");
+
+        long startPos = Long.parseLong(inputs[0]);
+        long endPos = Long.parseLong(inputs[1]);
+
+        int sqrtED = (int) Math.sqrt((double) endPos);
+
+
+
+        boolean[] isPrime = new boolean[sqrtED + 1];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = isPrime[1] = false;
+
+        int outerLoopMax = (int) Math.sqrt(isPrime.length);
+        for (int i = 2; i <= outerLoopMax; i++) {
+            if (!isPrime[i]) continue;
+
+            for (int j = 2; i * j < isPrime.length; j++) {
+                isPrime[i * j] = false;
+            }
+        }
+
+        Set<Long> set = new HashSet<>();
+
+        for (int base = 2; base <= sqrtED; base++) {
+            if (!isPrime[base]) continue;
+
+            int powerCount = 2;
+
+            long powerED = (long) Math.pow(base, powerCount);
+            while (powerED < startPos) {
+                powerCount++;
+                powerED = (long) Math.pow(base, powerCount);
+            }
+
+            while (powerED <= endPos) {
+                set.add(powerED);
+                powerCount++;
+                powerED = (long) Math.pow(base, powerCount);
+            }
+        }
+
+        bw.write(Integer.toString(set.size()));
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

@@ -1,0 +1,59 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/16439
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        int[][] arr = new int[n][];
+        for (int i = 0; i < n; i++) {
+            arr[i] = Arrays.stream(br.readLine().split(" "))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+        }
+
+        int max = 0;
+
+        int[] localMax = new int[n];
+
+        for (int i = 0; i < m; i++) {
+            for (int j = i + 1; j < m; j++) {
+                for (int k = j + 1; k < m; k++) {
+                    Arrays.fill(localMax, 0);
+
+                    for (int each = 0; each < n; each++) {
+                        localMax[each] = Math.max(Math.max(arr[each][i], arr[each][j]), arr[each][k]);
+                    }
+
+                    int localSum = 0;
+                    for (int e : localMax) {
+                        localSum += e;
+                    }
+
+                    if (max < localSum) {
+                        max = localSum;
+                    }
+                }
+            }
+        }
+
+        bw.write(Integer.toString(max));
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

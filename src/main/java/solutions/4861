@@ -1,0 +1,54 @@
+import java.io.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/4861
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int[] skipByDigits = new int[10];
+
+        skipByDigits[0] = 0;
+        skipByDigits[1] = 1;
+        for (int i = 2; i < skipByDigits.length; i++) {
+            skipByDigits[i] = skipByDigits[i - 1] * 9 + (int) Math.pow(10, i - 1);
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        String input = br.readLine();
+        while (!"0".equals(input)) {
+            int len = input.length();
+            char[] chars = input.toCharArray();
+
+            long skipped = 0L;
+
+            for (int j = 0; j < chars.length; j++) {
+                long converted = chars[j] - '0';
+
+                if (converted < 4) {
+                    long currentSkip = converted * skipByDigits[len - j - 1];
+                    skipped += currentSkip;
+                } else {
+                    long currentSkip = (converted - 1) * skipByDigits[len - j - 1] + (long) Math.pow(10, len - j - 1);
+                    skipped += currentSkip;
+                }
+            }
+
+            sb.append(input).append(": ").append(Long.parseLong(input) - skipped).append("\n");
+            input = br.readLine();
+        }
+
+        bw.write(sb.toString().trim());
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

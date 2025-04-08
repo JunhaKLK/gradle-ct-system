@@ -1,0 +1,65 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/24780
+
+    private static class Node {
+        int value;
+
+        public Node(int value) {
+            this.value = value;
+        }
+
+        Node parent = null;
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int kn = Integer.parseInt(br.readLine());
+
+        Node[] arr = new Node[100];
+        for (int i = 0; i < 100; i++) {
+            arr[i] = new Node(i + 1);
+        }
+
+        Node knode = arr[kn - 1];
+        String input = br.readLine();
+
+        while (!"-1".equals(input)) {
+            StringTokenizer st = new StringTokenizer(input);
+
+            int a = Integer.parseInt(st.nextToken());
+            Node node = arr[a - 1];
+
+            while (st.hasMoreTokens()) {
+                int childId = Integer.parseInt(st.nextToken());
+
+                arr[childId - 1].parent = node;
+            }
+
+            input = br.readLine();
+        }
+
+        assert knode != null;
+
+        StringBuilder sb = new StringBuilder();
+        while (knode != null) {
+            sb.append(knode.value).append(" ");
+            knode = knode.parent;
+        }
+
+        bw.write(sb.toString().trim());
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

@@ -1,0 +1,46 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/8094
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int w = Integer.parseInt(br.readLine());
+        int n = Integer.parseInt(br.readLine());
+
+        TreeSet<Integer> treeSet = new TreeSet<>((o1, o2) -> o2.compareTo(o1));
+
+        for (int i = 0; i < n; i++) {
+            treeSet.add(Integer.parseInt(br.readLine()));
+        }
+
+        int count = 0;
+        while (!treeSet.isEmpty()) {
+            int polled = treeSet.pollFirst();
+
+            if (treeSet.isEmpty()) {
+                break;
+            }
+
+            Integer last = treeSet.ceiling(w - polled);
+            if (last != null) {
+                treeSet.remove(w - polled);
+            }
+            count++;
+        }
+
+        bw.write(Integer.toString(count));
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

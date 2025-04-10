@@ -1,0 +1,62 @@
+import java.io.*;
+import java.util.Arrays;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/17829
+
+    private static int result = 0;
+
+    private static int getSec(int[][] board, int startRow, int startCol) {
+        int[] arr = new int[4];
+        int pos = 0;
+        for (int i = startRow; i < startRow + 2; i++) {
+            for (int j = startCol; j < startCol + 2; j++) {
+                arr[pos++] = board[i][j];
+            }
+        }
+
+        Arrays.sort(arr);
+        return arr[2];
+    }
+
+    private static int[][] pulling(int[][] original) {
+        if (original.length < 2) {
+            result = original[0][0];
+            return original;
+        }
+
+        int[][] ret = new int[original.length / 2][original.length / 2];
+
+        for (int i = 0; i < ret.length; i++) {
+            for (int j = 0; j < ret.length; j++) {
+                ret[i][j] = getSec(original, i * 2, j * 2);
+            }
+        }
+
+        return pulling(ret);
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+
+        int[][] board = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            board[i] = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        }
+
+        pulling(board);
+        System.out.println(result);
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

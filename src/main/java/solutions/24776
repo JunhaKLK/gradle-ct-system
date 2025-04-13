@@ -1,0 +1,54 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/24776
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        Map<String, Integer> map = new HashMap<>();
+
+        String input = br.readLine();
+        while (!"***".equals(input)) {
+            if (!map.containsKey(input)) {
+                map.put(input, 0);
+            }
+
+            map.put(input, map.get(input) + 1);
+
+            input = br.readLine();
+        }
+
+        int max = 0;
+        List<String> maxes = new ArrayList<>();
+
+        for (String name : map.keySet()) {
+            int curr = map.get(name);
+
+            if (curr > max) {
+                maxes.clear();
+                maxes.add(name);
+                max = curr;
+            } else if (curr == max) {
+                maxes.add(name);
+            }
+        }
+
+        if (maxes.size() > 1) {
+            bw.write("Runoff!");
+        } else {
+            bw.write(maxes.get(0));
+        }
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

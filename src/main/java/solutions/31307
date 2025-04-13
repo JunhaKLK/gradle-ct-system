@@ -1,0 +1,47 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/31307
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken()) * 5;
+
+        List<Integer> list = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            list.add(Integer.parseInt(br.readLine()));
+        }
+
+        list.sort((i1, i2) -> i1 - i2);
+
+        int count = 0;
+
+        for (int v : list) {
+            if (m >= v) {
+                m -= v;
+                count++;
+            } else {
+                break;
+            }
+        }
+
+        bw.write(Integer.toString(count));
+
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

@@ -1,0 +1,88 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/16179
+
+    private static int primeCount() {
+        boolean[] isPrime = new boolean[100];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = false;
+        isPrime[1] = false;
+
+        for (int i = 2; i < isPrime.length; i++) {
+            if (isPrime[i]) {
+                for (int j = 2; i * j < isPrime.length; j++) {
+                    isPrime[i * j] = false;
+                }
+            }
+        }
+
+        int count = 0;
+
+        for (boolean b : isPrime) {
+            if (b) count++;
+        }
+
+        return count;
+    }
+
+    private static int evenCount() {
+        int count = 0;
+        for (int i = 10; i < 100; i++) {
+            int f = i / 10;
+            int s = i % 10;
+
+            int sum = f + s;
+            if (sum % 2 == 0) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int t = Integer.parseInt(br.readLine());
+        StringBuilder sb = new StringBuilder();
+
+        int ev = evenCount(); // 45
+        int pr = primeCount(); // 25
+        int mod = 9973;
+
+        for (int i = 0; i < t; i++) {
+            int n = Integer.parseInt(br.readLine());
+
+            int xross = (ev * pr) % mod;
+            for (int j = 0; j < n - 4; j++) {
+                xross = (xross * 10) % mod;
+            }
+
+            int left = ev % mod;
+            for (int j = 0; j < n - 2; j++) {
+                left = (left * 10) % mod;
+            }
+
+            int right = (9 * pr) % mod;
+            for (int j = 0; j < n - 3; j++) {
+                right = (right * 10) % mod;
+            }
+
+            int result = (left + right - xross + mod) % mod;
+            sb.append(result).append("\n");
+        }
+
+        bw.write(sb.toString());
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

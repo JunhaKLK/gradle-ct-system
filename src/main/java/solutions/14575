@@ -1,0 +1,89 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/14575
+
+    private static boolean check(List<int[]> list, int s, long target) {
+        long minSum = 0; // 각 참가자가 최소한으로 받는 경우의 합
+        long maxSum = 0; // 각 참가자가 최대한으로 받는 경우의 합 (S 제한 적용)
+
+        for (int[] item : list) {
+            int minDrink = item[0]; // Li
+            int maxDrink = Math.min(item[1], s); // min(Ri, S)
+
+            if (maxDrink < minDrink) {
+                return false; // S가 Li보다 작으면 불가능
+            }
+
+            minSum += minDrink;
+            maxSum += maxDrink;
+        }
+
+        // target이 가능한 범위 내에 있는지 확인
+        return minSum <= target && target <= maxSum;
+    }
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String[] strings = br.readLine().split(" ");
+
+        int n = Integer.parseInt(strings[0]);
+        long target = Long.parseLong(strings[1]); // int 범위를 초과할 수 있으므로 long 사용
+        List<int[]> list = new ArrayList<>(n);
+
+        int left = 1; // 최소 S는 1
+        int right = 1000000; // Ri의 최대값
+
+        for (int i = 0; i < n; i++) {
+            String[] localInput = br.readLine().split(" ");
+
+            int sp = Integer.parseInt(localInput[0]);
+            int ep = Integer.parseInt(localInput[1]);
+
+            list.add(new int[]{sp, ep});
+        }
+
+        // 먼저 S와 관계없이 문제가 해결 가능한지 확인
+        long totalMin = 0;
+        long totalMax = 0;
+
+        for (int[] item : list) {
+            totalMin += item[0];
+            totalMax += item[1];
+        }
+
+        if (totalMin > target || totalMax < target) {
+            bw.write("-1"); // 불가능한 경우
+            bw.flush();
+            br.close();
+            bw.close();
+            return;
+        }
+
+        int result = -1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2; // 오버플로우 방지
+
+            if (check(list, mid, target)) {
+                result = mid;
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        bw.write(Integer.toString(result));
+
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}

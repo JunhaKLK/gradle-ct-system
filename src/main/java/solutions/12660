@@ -1,0 +1,49 @@
+import java.io.*;
+
+public class Main {
+
+    // https://www.acmicpc.net/problem/12660
+
+    public static void problemSolver() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+        String target = "welcome to code jam";
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int t = 1; t <= n; t++) {
+            String input = br.readLine();
+
+            int[][] dp = new int[input.length() + 1][target.length() + 1];
+
+            for (int i = 0; i <= input.length(); i++) {
+                dp[i][0] = 1;
+            }
+
+            for (int i = 1; i <= input.length(); i++) {
+                for (int j = 1; j <= target.length(); j++) {
+                    if (input.charAt(i - 1) == target.charAt(j - 1)) {
+                        dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j]) % 10000;
+                    } else {
+                        dp[i][j] = dp[i - 1][j];
+                    }
+                }
+            }
+            
+            int result = dp[input.length()][target.length()];
+            sb.append("Case #").append(t).append(": ");
+            sb.append(String.format("%04d", result)).append("\n");
+        }
+
+        bw.write(sb.toString().trim());
+        bw.flush();
+        br.close();
+        bw.close();
+    }
+
+    public static void main(String[] args) throws IOException {
+        problemSolver();
+    }
+}
